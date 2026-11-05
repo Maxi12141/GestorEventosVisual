@@ -1,0 +1,23 @@
+-- =====================================================================
+-- 006 · LIMPIEZA DE LA VERSIÓN ANTERIOR (OPCIONAL, SOLO SI ESTÁS SEGURO)
+-- ⚠️  ESTO BORRA PARA SIEMPRE las tablas del gestor viejo (boliches, artistas, bebidas,
+--     eventos de la versión 4/5, entradas, costos, sponsors, etc.) y sus datos.
+-- La versión 6 NO las usa. Dejalas si querés conservar los datos viejos.
+-- Si querés rescatar sedes y artistas, corré ANTES el archivo 004.
+-- Para evitar accidentes, las instrucciones están comentadas: sacales el "--" a las
+-- líneas que empiezan con "drop" solo si de verdad querés borrarlas.
+-- =====================================================================
+
+-- drop table if exists public.evento_sponsors cascade;
+-- drop table if exists public.evento_costos cascade;
+-- drop table if exists public.evento_entradas cascade;
+-- drop table if exists public.evento_bebidas cascade;
+-- drop table if exists public.evento_artistas cascade;
+-- drop table if exists public.boliche_fechas cascade;
+-- drop table if exists public.eventos cascade;
+-- drop table if exists public.bebidas cascade;
+-- drop table if exists public.artistas cascade;
+-- drop table if exists public.boliches cascade;
+-- drop table if exists public.configuracion cascade;
+-- drop function if exists public.guardar_evento(bigint, jsonb, uuid);
+-- drop function if exists public.cambiar_estado_evento(bigint, text);

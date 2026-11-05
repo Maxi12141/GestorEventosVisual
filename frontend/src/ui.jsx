@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react'
-import { AlertTriangle, AudioLines, Info, Loader2 } from 'lucide-react'
+import { createContext, useContext, useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react'
+import { AlertTriangle, Info, Loader2 } from 'lucide-react'
 import { Modal as AModal, message } from 'antd'
 import { ESTADOS, MAX_PERSONAS, MAX_IMPORTE } from './utils.js'
 
@@ -16,11 +16,22 @@ export function ToastProvider({ children }) {
 }
 
 // ---------- Botón ----------
-export function Btn({ variant = 'primary', size, icon: Icon, loading, children, className = '', ...p }) {
+export function Btn({ variant = 'primary', size, icon: Icon, loading, children, className = '', onMouseMove, ...p }) {
+  const primario = variant === 'primary'
+  const mover = (e) => {
+    if (primario) {
+      const r = e.currentTarget.getBoundingClientRect()
+      e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`)
+      e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`)
+    }
+    onMouseMove?.(e)
+  }
   return (
-    <button className={`btn ${variant} ${size || ''} ${className}`} disabled={p.disabled || loading} {...p}>
-      {loading ? <Loader2 size={16} className="spin" /> : Icon ? <Icon size={size === 'sm' ? 14 : 16} /> : null}
-      {children}
+    <button className={`btn ${variant} ${size || ''} ${primario ? 'shine' : ''} ${className}`} disabled={p.disabled || loading} onMouseMove={mover} {...p}>
+      <span className="btn-face">
+        {loading ? <Loader2 size={16} className="spin" /> : Icon ? <Icon size={size === 'sm' ? 14 : 16} /> : null}
+        {children}
+      </span>
     </button>
   )
 }
@@ -109,19 +120,80 @@ export const Estado = ({ tipo, valor }) => {
   const [label, color] = ESTADOS[tipo]?.[valor] || [valor, 'gris']
   return <Badge color={color}>{label}</Badge>
 }
+function Marca() {
+  return (
+    <svg className="marca" viewBox="0 0 64 64" aria-hidden="true">
+      <rect className="marca-fondo" width="64" height="64" rx="16" />
+      <path className="b b1" d="M16 44 V30" />
+      <path className="b b2" d="M28 50 V18" />
+      <path className="b b3" d="M40 50 V24" />
+      <path className="b b4" d="M52 44 V32" />
+      <path className="arco" d="M12 50 C20 16 46 12 54 30" />
+    </svg>
+  )
+}
+
 export const Spinner = ({ texto, full }) => (
-  <div className={'boot' + (full ? ' full' : '')} role="status" aria-live="polite">
-    <div className="boot-orb" aria-hidden="true">
-      <span className="boot-ring" />
-      <span className="boot-ring delay" />
-      <span className="boot-core"><AudioLines size={22} /></span>
+  full || texto ? (
+    <div className={'boot' + (full ? ' full' : '')} role="status" aria-live="polite">
+      <Marca />
+      {texto && <strong className="boot-label">{texto}</strong>}
     </div>
-    <div className="boot-copy">
-      <strong>{texto || 'Cargando'}</strong>
-      <span className="boot-track"><i /></span>
+  ) : (
+    <div className="skel" role="status" aria-label="Cargando">
+      <span /><span /><span /><span />
     </div>
-  </div>
+  )
 )
+
+export function Conteo({ valor, formato }) {
+  const num = Number(valor)
+  const listo = !Number.isFinite(num)
+  const quieto = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const [n, setN] = useState(listo || quieto ? num : 0)
+  const vio = useRef(false)
+  useEffect(() => {
+    if (listo) return undefined
+    if (quieto || vio.current) { setN(num); return undefined }
+    const t0 = performance.now()
+    let raf = 0
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / 720)
+      setN(num * (1 - (1 - p) ** 3))
+      if (p < 1) raf = requestAnimationFrame(tick)
+      else vio.current = true
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [num, listo, quieto])
+  if (listo) return valor
+  return <span className="conteo">{formato ? formato(n) : Math.round(n).toLocaleString('es-AR')}</span>
+}
+
+export function TabBar({ children }) {
+  const ref = useRef(null)
+  const [line, setLine] = useState({ x: 0, w: 0 })
+  const medir = () => {
+    const bar = ref.current
+    const on = bar?.querySelector('[aria-selected="true"]')
+    if (!bar || !on) return
+    const a = bar.getBoundingClientRect()
+    const b = on.getBoundingClientRect()
+    const next = { x: b.left - a.left + 12, w: Math.max(0, b.width - 24) }
+    setLine((prev) => (prev.x === next.x && prev.w === next.w ? prev : next))
+  }
+  useLayoutEffect(() => { medir() })
+  useEffect(() => {
+    window.addEventListener('resize', medir)
+    return () => window.removeEventListener('resize', medir)
+  }, [])
+  return (
+    <div className="tabs no-print" role="tablist" ref={ref}>
+      {children}
+      <i className="tab-line" style={{ width: line.w, transform: `translateX(${line.x}px)` }} />
+    </div>
+  )
+}
 export const Vacio = ({ icon: Icon, titulo, texto, children }) => (
   <div className="vacio">{Icon && <Icon size={34} />}<strong>{titulo}</strong>{texto && <p>{texto}</p>}{children}</div>
 )

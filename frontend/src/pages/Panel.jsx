@@ -2,7 +2,7 @@ import { Bell, ListChecks, AlertTriangle, PartyPopper, Handshake, ClipboardList,
 import { api } from '../api.js'
 import { useAuth } from '../auth.jsx'
 import { ir } from '../router.js'
-import { Btn, Spinner, Vacio, Badge, Estado, useCarga } from '../ui.jsx'
+import { Btn, Spinner, Vacio, Badge, Estado, Conteo, useCarga } from '../ui.jsx'
 import { EventoFila, Cuando, FeriadoChips } from '../components.jsx'
 import { fechaLarga, cap1, fechaMini, $ } from '../utils.js'
 
@@ -25,7 +25,7 @@ export default function Panel({ nuevos }) {
   if (error) return <Vacio icon={AlertTriangle} titulo="No se pudo cargar el panel" texto={error.message} />
   const k = d.kpis
   const tile = (n, label, href, tono) => (
-    <a className={'tile ' + (n > 0 && tono ? tono : '')} href={href}><b>{n}</b><span>{label}</span></a>
+    <a className={'tile ' + (n > 0 && tono ? tono : '')} href={href}><b><Conteo valor={n} /></b><span>{label}</span></a>
   )
   const todoAlDia = !k.por_cerrar && !k.tareas_vencidas && !k.servicios_sin_confirmar && !k.cambios_pendientes && !k.propuestas_sin_respuesta
 

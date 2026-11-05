@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Send } from 'lucide-react'
 import { api } from '../api.js'
 import { ir } from '../router.js'
-import { Btn, Field, NumInput, Spinner, Vacio, useCarga, useToast } from '../ui.jsx'
+import { Btn, Field, NumInput, Spinner, Vacio, Conteo, useCarga, useToast } from '../ui.jsx'
 import { $, num, hoyAR, MAX_PERSONAS, fechaMaxima, validarPedido } from '../utils.js'
 import ConfirmarPedido from './ConfirmarPedido.jsx'
 
@@ -84,7 +84,7 @@ export default function ArmarPaquete() {
             </div>
           )}
           <div className="row" style={{ justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 12, flexWrap: 'nowrap' }}>
-            <span>Total estimado</span><b style={{ fontSize: 24 }}>{$(total)}</b>
+            <span>Total estimado</span><b style={{ fontSize: 24 }}><Conteo valor={total} formato={$} /></b>
           </div>
           <div className="muted small">{f.lugar || 'Tu evento'} · {num(f.asistentes)} personas</div>
           <Btn icon={Send} onClick={revisar}>Revisar y confirmar</Btn>

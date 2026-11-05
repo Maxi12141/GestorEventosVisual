@@ -98,7 +98,13 @@ export default function Login() {
             </Field>
           )}
           {(modo === 'registro' || modo === 'reset') && (
-            <Field label="Repetí la contraseña"><div className="search"><Lock size={16} /><input type={ver ? 'text' : 'password'} value={f.password2} onChange={set('password2')} placeholder="••••••••" autoComplete="new-password" /></div></Field>
+            <Field label="Repetí la contraseña">
+              <div className="search passwrap">
+                <Lock size={16} />
+                <input type={ver ? 'text' : 'password'} value={f.password2} onChange={set('password2')} placeholder="••••••••" autoComplete="new-password" />
+                <button type="button" className="icon-btn" onClick={() => setVer(!ver)} aria-label="Mostrar u ocultar contraseña">{ver ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+              </div>
+            </Field>
           )}
 
           {error && <div className="alerta error">{error}</div>}

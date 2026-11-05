@@ -3,7 +3,7 @@ import { Plus, Pencil, Trash2, Check, Users as UsersIcon } from 'lucide-react'
 import { api } from '../api.js'
 import { useAuth } from '../auth.jsx'
 import { ir } from '../router.js'
-import { Btn, Field, NumInput, Modal, Confirmar, Spinner, Vacio, Badge, useCarga, useToast } from '../ui.jsx'
+import { Btn, Field, NumInput, Modal, Confirmar, Spinner, Vacio, Badge, Conteo, useCarga, useToast } from '../ui.jsx'
 import { $, num, hoyAR, SERVICIOS_COMUNES, MAX_PERSONAS, fechaMaxima, validarPedido } from '../utils.js'
 import ConfirmarPedido from './ConfirmarPedido.jsx'
 
@@ -123,7 +123,7 @@ export default function Paquetes() {
                 {p.duracion && <span>⏱ Duración: {p.duracion}</span>}
                 {p.ideal_para && <span>🎯 Ideal para: {p.ideal_para}</span>}
               </div>
-              <div className="precio">{$(p.precio)}</div>
+              <div className="precio"><Conteo valor={p.precio} formato={$} /></div>
               <div><b className="small">Qué incluye</b>
                 <ul style={{ margin: '6px 0 0', padding: 0, listStyle: 'none', display: 'grid', gap: 5 }}>{((p.incluye || []).length ? p.incluye : p.servicios || []).map((s) => <li key={s} className="small" style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}><Check size={14} style={{ flex: 'none', marginTop: 2 }} />{s}</li>)}</ul>
               </div>

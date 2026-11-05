@@ -53,8 +53,8 @@ export default function Calendario() {
             const fe = feriadoDe(f), it = delDia(f)
             const total = it.eventos.length + it.solicitudes.length + (verTareas ? it.tareas.length : 0)
             return (
-              <div key={f} className={'cal-day clic' + (mesDe(f) !== mes ? ' out' : '') + (f === hoy ? ' hoy' : '') + (fe ? ' feriado' : '')} onClick={() => setDia(f)}>
-                <div className="dn"><span>{Number(f.slice(8))}</span></div>
+              <div key={f} className={'cal-day clic' + (mesDe(f) !== mes ? ' out' : '') + (f === hoy ? ' hoy' : '') + (dia === f ? ' sel' : '') + (fe ? ' feriado' : '')} onClick={() => setDia(f)}>
+                <div className="dn"><span>{Number(f.slice(8))}{f === hoy && <i className="hoy-dot" />}</span></div>
                 {fe && <div className="fer">{fe.nombre}</div>}
                 {it.eventos.slice(0, 3).map((e) => <button key={'e' + e.id} className={'cal-ev' + (e.estado === 'realizado' ? ' festival' : '')} title={`${e.nombre} · ${e.sede}`} onClick={(ev) => { ev.stopPropagation(); ir('eventos/' + e.id) }}>{e.nombre}</button>)}
                 {it.solicitudes.slice(0, 2).map((s) => <button key={'s' + s.id} className="cal-ev borrador" title={`Solicitud: ${s.titulo}`} onClick={(ev) => { ev.stopPropagation(); ir('solicitudes/' + s.id) }}>{s.titulo}</button>)}

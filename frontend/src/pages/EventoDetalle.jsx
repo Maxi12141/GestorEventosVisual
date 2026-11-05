@@ -3,7 +3,7 @@ import { ArrowLeft, Pencil, Plus, Trash2, Copy, Printer, Users, GitCompare, Chec
 import { api } from '../api.js'
 import { useAuth } from '../auth.jsx'
 import { ir } from '../router.js'
-import { Btn, Field, Spinner, Vacio, Estado, Badge, Modal, NumInput, Confirmar, useCarga, useToast } from '../ui.jsx'
+import { Btn, Field, Spinner, Vacio, Estado, Badge, Modal, NumInput, Confirmar, TabBar, useCarga, useToast } from '../ui.jsx'
 import { SelectCatalogo, ProximoPaso, Timeline, Telefono, FeriadoChips, Cuando } from '../components.jsx'
 import { ReasignarModal, ServicioModal, TareaModal, CambioModal, IncidenteModal, CerrarModal, CancelarModal, MotivoModal, CorregirCierreModal, Dlg } from './EventoModales.jsx'
 import { $, cap1, fechaLarga, fechaCorta, fechaMini, fechaHora, hace, hora, hoyAR, copiar, TIPOS_EVENTO, CAMPOS_CAMBIO, ESTADOS } from '../utils.js'
@@ -249,11 +249,13 @@ export default function EventoDetalle({ id, tab: tabInicial }) {
 
       {paso}
 
-      <div className="tabs no-print" role="tablist">
+      <TabBar>
         {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}{badge(conteo[k])}</button>)}
+      </TabBar>
+      <div className="tab-pane" key={tab}>
+        {tab === 'resumen' && Resumen}{tab === 'servicios' && Servicios}{tab === 'tareas' && Tareas}{tab === 'cambios' && Cambios}{tab === 'durante' && Durante}{tab === 'cierre' && Cierre}
+        {tab === 'historial' && <section className="card"><div className="card-head"><h2>Historial del evento</h2><span className="muted small">incluye lo ocurrido desde la solicitud</span></div><Timeline items={historial} /></section>}
       </div>
-      {tab === 'resumen' && Resumen}{tab === 'servicios' && Servicios}{tab === 'tareas' && Tareas}{tab === 'cambios' && Cambios}{tab === 'durante' && Durante}{tab === 'cierre' && Cierre}
-      {tab === 'historial' && <section className="card"><div className="card-head"><h2>Historial del evento</h2><span className="muted small">incluye lo ocurrido desde la solicitud</span></div><Timeline items={historial} /></section>}
 
       {dlg === 'reasignar' && <ReasignarModal enc={e} onClose={() => setDlg(null)} onHecho={hecho} />}
       {dlg?.servicio && <ServicioModal s={dlg.servicio} puedeVerImporte={P.ver_importes} onClose={() => setDlg(null)} onHecho={hecho} />}
